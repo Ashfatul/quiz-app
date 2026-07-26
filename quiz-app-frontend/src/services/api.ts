@@ -260,8 +260,9 @@ export interface QuizQuestionDto {
 export interface CreateQuizDto {
   title: string;
   description: string;
-  category: number | string; // Category ID
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  categoryId?: number | string; // Category ID
+  category?: number | string;   // Category ID fallback
+  difficulty: 'Easy' | 'Medium' | 'Hard' | 'EASY' | 'MEDIUM' | 'HARD';
   timeLimit: number; // in minutes
   questions: QuizQuestionDto[];
 }
@@ -269,7 +270,7 @@ export interface CreateQuizDto {
 /**
  * FETCH REQUEST: Create Quiz
  * METHOD: POST
- * ENDPOINT: /quizzes
+ * ENDPOINT: /quiz/create
  * CONTENT-TYPE: application/json
  * REQUIRES AUTH: Yes (Bearer token, role: Admin or Teacher)
  * 
@@ -277,8 +278,8 @@ export interface CreateQuizDto {
  * {
  *   "title": "React Hooks Trivia",
  *   "description": "Show off your hooks knowledge!",
- *   "category": 1, // Category ID (number)
- *   "difficulty": "Medium",
+ *   "categoryId": "cuid",
+ *   "difficulty": "MEDIUM",
  *   "timeLimit": 10,
  *   "questions": [
  *     {
@@ -290,7 +291,7 @@ export interface CreateQuizDto {
  * }
  */
 export async function createQuiz(data: CreateQuizDto) {
-  const response = await fetch(`${API_BASE_URL}/quizzes`, {
+  const response = await fetch(`${API_BASE_URL}/quiz/create`, {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify(data),
@@ -308,14 +309,14 @@ export async function createQuiz(data: CreateQuizDto) {
 /**
  * FETCH REQUEST: Delete Quiz
  * METHOD: DELETE
- * ENDPOINT: /quizzes/:id
+ * ENDPOINT: /quiz/delete/:id
  * CONTENT-TYPE: application/json
  * REQUIRES AUTH: Yes (Bearer token, owner/admin)
  * 
  * SUBMIT_BODY: None (URL parameter :id)
  */
 export async function deleteQuiz(id: number | string) {
-  const response = await fetch(`${API_BASE_URL}/quizzes/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/quiz/delete/${id}`, {
     method: 'DELETE',
     headers: getHeaders(),
   });
@@ -332,7 +333,7 @@ export async function deleteQuiz(id: number | string) {
 /**
  * FETCH REQUEST: Fetch All Quizzes
  * METHOD: GET
- * ENDPOINT: /quizzes
+ * ENDPOINT: /quiz
  * CONTENT-TYPE: application/json
  * QUERY_PARAMS: ?search=react&category=dev
  * 
@@ -344,7 +345,7 @@ export async function getQuizzes(search?: string, category?: string) {
   if (category) params.append('category', category);
 
   const query = params.toString() ? `?${params.toString()}` : '';
-  const response = await fetch(`${API_BASE_URL}/quizzes${query}`, {
+  const response = await fetch(`${API_BASE_URL}/quiz${query}`, {
     method: 'GET',
     headers: getHeaders(),
   });
@@ -360,14 +361,14 @@ export async function getQuizzes(search?: string, category?: string) {
 /**
  * FETCH REQUEST: Fetch Quiz Details (Lobby / Play Mode)
  * METHOD: GET
- * ENDPOINT: /quizzes/:id
+ * ENDPOINT: /quiz/:id
  * CONTENT-TYPE: application/json
  * 
  * SUBMIT_BODY: None (URL parameter :id)
  * NOTE: The response should NOT leak the correctOptionIndex for security!
  */
 export async function getQuizDetails(id: number | string) {
-  const response = await fetch(`${API_BASE_URL}/quizzes/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/quiz/${id}`, {
     method: 'GET',
     headers: getHeaders(),
   });

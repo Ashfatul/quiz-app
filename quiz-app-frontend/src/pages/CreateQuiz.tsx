@@ -19,9 +19,11 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
-        if (Array.isArray(data)) {
-          setCategories(data);
-          if (data.length > 0) {
+        if (Array.isArray(data.data)) {
+          setCategories(data.data);
+
+          
+          if (data.data.length > 0) {
             setCategory(String(data[0].id));
           }
         } else {
@@ -29,14 +31,6 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
         }
       } catch (err: any) {
         console.error('Failed to fetch categories:', err);
-        // Fallback options in case the API is offline
-        const mockCategories = [
-          { id: 1, name: 'Backend Development' },
-          { id: 2, name: 'Advanced Backend' },
-          { id: 3, name: 'TypeScript Basics' }
-        ];
-        setCategories(mockCategories);
-        setCategory(String(mockCategories[0].id));
       }
     };
     fetchCategories();
@@ -130,8 +124,9 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
       await createQuiz({
         title,
         description,
-        category: isNaN(Number(category)) ? category : Number(category),
-        difficulty,
+        categoryId: category,
+        category: category,
+        difficulty: difficulty.toUpperCase() as any,
         timeLimit: Number(timeLimit),
         questions
       });
@@ -197,8 +192,7 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
           <div className="form-group">
             <label htmlFor="category">Category</label>
             <select
-              id="category"
-              value={category}
+              id="category"              value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
               {Array.isArray(categories) && categories.map((cat) => (
