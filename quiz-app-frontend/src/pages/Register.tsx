@@ -11,17 +11,11 @@ export const Register: React.FC<RegisterProps> = ({ navigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'student' | 'teacher'>('student');
-  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatar, setAvatar] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setAvatar(e.target.files[0]);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,14 +27,14 @@ export const Register: React.FC<RegisterProps> = ({ navigate }) => {
       /**
        * FETCH REQUEST: registerUser(data)
        * ENDPOINT: POST /auth/register
-       * CONTENT-TYPE: multipart/form-data
+       * CONTENT-TYPE: application/json
        * SUBMIT_BODY:
        * {
        *   "username": username, // e.g. "johndoe"
        *   "email": email,       // e.g. "john@example.com"
        *   "password": password, // e.g. "password123"
        *   "role": role,         // "student" | "teacher"
-       *   "avatar": File        // Binary stream (optional)
+       *   "avatar": string      // URL / path (optional)
        * }
        */
       await registerUser({
@@ -48,7 +42,7 @@ export const Register: React.FC<RegisterProps> = ({ navigate }) => {
         email,
         password,
         role,
-        avatar: avatar || undefined
+        avatar: avatar.trim() || undefined
       });
 
       setSuccess(true);
@@ -150,18 +144,16 @@ export const Register: React.FC<RegisterProps> = ({ navigate }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="avatar">Profile Picture (Optional)</label>
-            <div style={styles.fileInputContainer}>
-              <label htmlFor="avatar" style={styles.fileLabel}>
-                <Image size={18} />
-                <span>{avatar ? avatar.name : 'Choose profile picture'}</span>
-              </label>
+            <label htmlFor="avatar">Profile Picture URL (Optional)</label>
+            <div style={styles.inputWrapper}>
+              <Image size={18} style={styles.inputIcon} />
               <input
                 id="avatar"
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                style={styles.fileInputHidden}
+                type="url"
+                placeholder="https://example.com/avatar.png"
+                value={avatar}
+                onChange={(e) => setAvatar(e.target.value)}
+                style={styles.inputWithIcon}
               />
             </div>
           </div>

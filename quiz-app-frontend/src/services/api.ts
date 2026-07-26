@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-export const API_BASE_URL = 'http://localhost:3000/api';
+export const API_BASE_URL = 'http://localhost:3000';
 export const WS_BASE_URL = 'http://localhost:3000';
 
 // Helper to get JWT token from localStorage
@@ -37,38 +37,29 @@ export interface RegisterDto {
   email: string;    // must be valid email
   password: string; // min 6 characters
   role: 'student' | 'teacher'; // user roles
-  avatar?: File;    // optional profile picture file
+  avatar?: string;  // optional profile picture URL / string path
 }
 
 /**
  * FETCH REQUEST: User Registration
  * METHOD: POST
  * ENDPOINT: /auth/register
- * CONTENT-TYPE: multipart/form-data
+ * CONTENT-TYPE: application/json
  * 
- * SUBMIT_BODY: (Form Data)
+ * SUBMIT_BODY:
  * {
  *   "username": "johndoe",
  *   "email": "john@example.com",
  *   "password": "securepassword123",
  *   "role": "student" | "teacher",
- *   "avatar": File (Binary stream, optional)
+ *   "avatar": "http://example.com/avatar.png" (optional)
  * }
  */
 export async function registerUser(data: RegisterDto) {
-  const formData = new FormData();
-  formData.append('username', data.username);
-  formData.append('email', data.email);
-  formData.append('password', data.password);
-  formData.append('role', data.role);
-  if (data.avatar) {
-    formData.append('avatar', data.avatar);
-  }
-
-  const response = await fetch(`${API_BASE_URL}/auth/register`, {
+  const response = await fetch(`${API_BASE_URL}/register`, {
     method: 'POST',
-    headers: getHeaders(true),
-    body: formData,
+    headers: getHeaders(),
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {

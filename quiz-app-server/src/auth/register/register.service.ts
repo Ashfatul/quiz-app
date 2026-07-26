@@ -16,6 +16,7 @@ export class RegisterService {
                 email: dto.email,
                 password: hashedPassword,
                 avatar: dto.avatar,
+                role: dto.role,
             },
             select: {
                 id: true,
