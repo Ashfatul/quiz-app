@@ -43,7 +43,7 @@ export interface RegisterDto {
 /**
  * FETCH REQUEST: User Registration
  * METHOD: POST
- * ENDPOINT: /auth/register
+ * ENDPOINT: /register
  * CONTENT-TYPE: application/json
  * 
  * SUBMIT_BODY:
@@ -79,7 +79,7 @@ export interface LoginDto {
 /**
  * FETCH REQUEST: User Login
  * METHOD: POST
- * ENDPOINT: /auth/login
+ * ENDPOINT: /login
  * CONTENT-TYPE: application/json
  * 
  * SUBMIT_BODY:
@@ -89,7 +89,7 @@ export interface LoginDto {
  * }
  */
 export async function loginUser(data: LoginDto) {
-  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+  const response = await fetch(`${API_BASE_URL}/login`, {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify(data),

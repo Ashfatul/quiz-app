@@ -37,7 +37,7 @@ This guide maps each page in the frontend to the corresponding **NestJS backend 
   * **Database Entities**: Define a `User` entity/schema, hash passwords using `bcrypt`.
 
 ### 2. User Login (`/login`)
-* **Endpoint**: `POST /auth/login` (JSON)
+* **Endpoint**: `POST /login` (JSON)
 * **Request Payload**:
   ```json
   {
@@ -47,13 +47,14 @@ This guide maps each page in the frontend to the corresponding **NestJS backend 
   ```
 * **Response Payload**:
   ```json
+  // Supports either nested or flat response:
   {
-    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "user": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", // Or "token" / "access_token"
+    "user": { // Optional: You can put user fields here or flat on root
       "id": 1,
       "username": "coder123",
       "email": "coder@example.com",
-      "avatarUrl": "/uploads/avatars/16281729-avatar.png"
+      "avatar": "http://example.com/avatar.png"
     }
   }
   ```

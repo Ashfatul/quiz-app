@@ -23,7 +23,7 @@ export const Login: React.FC<LoginProps> = ({ setCurrentUser, navigate }) => {
     try {
       /**
        * FETCH REQUEST: loginUser(data)
-       * ENDPOINT: POST /auth/login
+       * ENDPOINT: POST /login
        * SUBMIT_BODY:
        * {
        *   "email": email,      // e.g. "coder@example.com"
@@ -32,10 +32,23 @@ export const Login: React.FC<LoginProps> = ({ setCurrentUser, navigate }) => {
        */
       const data = await loginUser({ email, password });
       
+      const token = data.accessToken || data.token || data.access_token;
+      const user = data.user || {
+        id: data.id,
+        username: data.username,
+        email: data.email,
+        role: data.role,
+        avatar: data.avatar
+      };
+
+      if (!token) {
+        throw new Error('Invalid response: Token not found in server response.');
+      }
+      
       // Save details
-      setAuthToken(data.accessToken);
-      localStorage.setItem('quiz_user', JSON.stringify(data.user));
-      setCurrentUser(data.user);
+      setAuthToken(token);
+      localStorage.setItem('quiz_user', JSON.stringify(user));
+      setCurrentUser(user);
       
       setSuccess(true);
       setTimeout(() => {
