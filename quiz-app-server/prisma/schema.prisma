@@ -23,8 +23,51 @@ model User {
   email     String   @unique
   password  String
   username  String   @unique
-  role      Role @default(student)
+  role      Role     @default(student)
   avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  quizzes     Quiz[]
+}
+
+model Quiz {
+  id                String     @id @default(cuid())
+  title             String
+  description       String
+  difficulty        Difficulty
+  timeLimit         Int
+  numberOfQuestions Int
+  categoryId        String
+  category          Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  questions         Question[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Question {
+  id                 String   @id @default(cuid())
+  title              String
+  option0            String
+  option1            String
+  option2            String
+  option3            String
+  correctOptionIndex String
+  quizId             String
+  quiz               Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }

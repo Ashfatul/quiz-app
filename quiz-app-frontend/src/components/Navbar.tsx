@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, LogIn, LogOut, PlusCircle, Trophy, UserPlus, Zap } from 'lucide-react';
+import { BookOpen, LogIn, LogOut, PlusCircle, Trophy, UserPlus, Zap, Settings } from 'lucide-react';
 import { clearAuth } from '../services/api';
 
 interface NavbarProps {
@@ -43,14 +43,24 @@ export const Navbar: React.FC<NavbarProps> = ({
         {currentUser && (
           <>
             {(currentUser.role === 'teacher' || currentUser.role === 'admin') && (
-              <button
-                className="btn"
-                style={isActive('/quizzes/create') ? styles.activeLink : styles.link}
-                onClick={() => navigate('/quizzes/create')}
-              >
-                <PlusCircle size={18} />
-                Create Quiz
-              </button>
+              <>
+                <button
+                  className="btn"
+                  style={isActive('/quizzes/create') ? styles.activeLink : styles.link}
+                  onClick={() => navigate('/quizzes/create')}
+                >
+                  <PlusCircle size={18} />
+                  Create Quiz
+                </button>
+                <button
+                  className="btn"
+                  style={isActive('/categories') ? styles.activeLink : styles.link}
+                  onClick={() => navigate('/categories')}
+                >
+                  <Settings size={18} />
+                  Manage Categories
+                </button>
+              </>
             )}
             <button
               className="btn"

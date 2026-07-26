@@ -66,6 +66,71 @@ This guide maps each page in the frontend to the corresponding **NestJS backend 
 
 ## 📝 Quizzes (CRUD & Roles)
 
+### 2.5. Category Management (CRUD)
+Teachers and Admins can manage quiz categories. This maps to the following API endpoints:
+
+#### A. Fetch Categories
+* **Endpoint**: `GET /quiz/categories` (JSON)
+* **Response Payload**:
+  ```json
+  [
+    {
+      "id": 1,
+      "name": "Backend Development",
+      "description": "NestJS controllers, providers, and modules."
+    }
+  ]
+  ```
+
+#### B. Create Category
+* **Endpoint**: `POST /quiz/categories` (JSON)
+* **Request Payload**:
+  ```json
+  {
+    "name": "Frontend Frameworks",
+    "description": "Quizzes about React, Vue, or Angular."
+  }
+  ```
+* **Response Payload**:
+  ```json
+  {
+    "id": 4,
+    "name": "Frontend Frameworks",
+    "description": "Quizzes about React, Vue, or Angular."
+  }
+  ```
+
+#### C. Update Category
+* **Endpoint**: `PATCH /quiz/categories/:id` (JSON)
+* **Request Payload**:
+  ```json
+  {
+    "name": "Updated Category Name",
+    "description": "Updated description"
+  }
+  ```
+* **Response Payload**:
+  ```json
+  {
+    "id": 4,
+    "name": "Updated Category Name",
+    "description": "Updated description"
+  }
+  ```
+
+#### D. Delete Category
+* **Endpoint**: `DELETE /quiz/categories/:id`
+* **Response Payload**:
+  ```json
+  {
+    "success": true
+  }
+  ```
+
+* **NestJS Learning Concepts**:
+  * **Authorization Guards**: Restrict POST, PATCH, and DELETE category operations using `RolesGuard` to role `admin` or `teacher`.
+  * **Relational DB Operations**: Execute database CRUD (Insert, Select, Update, Delete query builders) on the Category Entity/Schema.
+
 ### 3. Create Quiz (`/quizzes/create` / `/quizzes/edit/:id`)
 * **Endpoint**: `POST /quizzes` (Multipart/JSON mix, or JSON with base64 images, we will use JSON with optional image URL for simplicity, or multipart if needed. Let's use JSON for simplicity and learning files uploading as a separate entity).
 * **Request Payload**:
@@ -73,7 +138,7 @@ This guide maps each page in the frontend to the corresponding **NestJS backend 
   {
     "title": "Introduction to NestJS",
     "description": "Test your knowledge of NestJS basics!",
-    "category": "Backend Development",
+    "category": 1, // Category ID (number or string)
     "difficulty": "Easy", // "Easy" | "Medium" | "Hard"
     "timeLimit": 15, // In minutes
     "questions": [

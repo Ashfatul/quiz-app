@@ -7,6 +7,7 @@ import { Register } from './pages/Register';
 import { CreateQuiz } from './pages/CreateQuiz';
 import { PlayQuiz } from './pages/PlayQuiz';
 import { LiveLobby } from './pages/LiveLobby';
+import { ManageCategories } from './pages/ManageCategories';
 
 function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
@@ -50,6 +51,9 @@ function App() {
     }
     if (currentPath === '/quizzes/create') {
       return <CreateQuiz navigate={navigate} />;
+    }
+    if (currentPath === '/categories') {
+      return <ManageCategories navigate={navigate} currentUser={currentUser} />;
     }
     if (currentPath === '/lobby') {
       return <LiveLobby currentUser={currentUser} navigate={navigate} />;

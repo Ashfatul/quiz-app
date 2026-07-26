@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Trash, HelpCircle, Save, Settings, FileText, Check } from 'lucide-react';
-import { createQuiz } from '../services/api';
-import type { QuizQuestionDto } from '../services/api';
+import { createQuiz, getCategories } from '../services/api';
+import type { QuizQuestionDto, CategoryDto } from '../services/api';
 
 interface CreateQuizProps {
   navigate: (path: string) => void;
@@ -10,9 +10,37 @@ interface CreateQuizProps {
 export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Backend Development');
+  const [categories, setCategories] = useState<CategoryDto[]>([]);
+  const [category, setCategory] = useState('');
   const [difficulty, setDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Medium');
   const [timeLimit, setTimeLimit] = useState(10); // minutes
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        if (Array.isArray(data)) {
+          setCategories(data);
+          if (data.length > 0) {
+            setCategory(String(data[0].id));
+          }
+        } else {
+          throw new Error('Fetched categories data is not an array');
+        }
+      } catch (err: any) {
+        console.error('Failed to fetch categories:', err);
+        // Fallback options in case the API is offline
+        const mockCategories = [
+          { id: 1, name: 'Backend Development' },
+          { id: 2, name: 'Advanced Backend' },
+          { id: 3, name: 'TypeScript Basics' }
+        ];
+        setCategories(mockCategories);
+        setCategory(String(mockCategories[0].id));
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const [questions, setQuestions] = useState<QuizQuestionDto[]>([
     { text: '', options: ['', '', '', ''], correctOptionIndex: 0 }
@@ -87,7 +115,7 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
        * {
        *   "title": title,
        *   "description": description,
-       *   "category": category,
+       *   "category": 1, // Category ID (number or string)
        *   "difficulty": difficulty,
        *   "timeLimit": timeLimit,
        *   "questions": [
@@ -102,7 +130,7 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
       await createQuiz({
         title,
         description,
-        category,
+        category: isNaN(Number(category)) ? category : Number(category),
         difficulty,
         timeLimit: Number(timeLimit),
         questions
@@ -121,7 +149,7 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
 
   return (
     <div style={styles.container} className="animate-fade-in">
-      <form onSubmit={handleSubmit} style={styles.formLayout}>
+      <form onSubmit={handleSubmit} className="grid-layout-1-2">
         {/* Left Side: General settings */}
         <div className="glass-panel" style={styles.configCard}>
           <div style={styles.header}>
@@ -173,9 +201,11 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option value="Backend Development">Backend Development</option>
-              <option value="Advanced Backend">Advanced Backend</option>
-              <option value="TypeScript Basics">TypeScript Basics</option>
+              {Array.isArray(categories) && categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -262,7 +292,7 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
                   />
                 </div>
 
-                <div style={styles.optionsGrid}>
+                <div className="grid-options-col">
                   {question.options.map((option, oIdx) => (
                     <div key={oIdx} style={styles.optionRow}>
                       <div style={styles.radioWrapper}>
@@ -317,15 +347,6 @@ const styles = {
     margin: '0 auto',
     width: '100%',
     flex: 1,
-  },
-  formLayout: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 2fr',
-    gap: '2rem',
-    alignItems: 'start',
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: '1fr',
-    },
   },
   configCard: {
     textAlign: 'left' as const,
@@ -395,15 +416,6 @@ const styles = {
     background: 'rgba(239, 68, 68, 0.1)',
     border: '1px solid rgba(239, 68, 68, 0.2)',
     color: '#ef4444',
-  },
-  optionsGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '1rem',
-    marginTop: '0.5rem',
-    '@media (max-width: 600px)': {
-      gridTemplateColumns: '1fr',
-    },
   },
   optionRow: {
     display: 'flex',

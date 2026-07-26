@@ -164,7 +164,9 @@ export const PlayQuiz: React.FC<PlayQuizProps> = ({ quizId, navigate }) => {
     return (
       <div style={styles.container} className="animate-fade-in">
         <div className="glass-panel" style={styles.lobbyCard}>
-          <span style={styles.categoryBadge}>{quiz.category}</span>
+          <span style={styles.categoryBadge}>
+            {typeof quiz.category === 'object' && quiz.category ? quiz.category.name : quiz.category}
+          </span>
           <h1 style={styles.title}>{quiz.title}</h1>
           <p style={styles.desc}>{quiz.description}</p>
 

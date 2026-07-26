@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Search, Filter, BookOpen, Clock, Award, Star, RefreshCw, BarChart2, Zap, Trash2 } from 'lucide-react';
-import { getQuizzes, getUserStats, deleteQuiz } from '../services/api';
+import { getQuizzes, getUserStats, deleteQuiz, getCategories } from '../services/api';
+import type { CategoryDto } from '../services/api';
 
 interface DashboardProps {
   currentUser: any;
@@ -12,6 +13,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
   const [stats, setStats] = useState<any>(null);
   
   const [search, setSearch] = useState('');
+  const [categories, setCategories] = useState<CategoryDto[]>([]);
   const [category, setCategory] = useState('');
   
   const [loadingQuizzes, setLoadingQuizzes] = useState(true);
@@ -82,6 +84,27 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
   };
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        if (Array.isArray(data)) {
+          setCategories(data);
+        } else {
+          throw new Error('Fetched categories data is not an array');
+        }
+      } catch (err: any) {
+        console.error('Failed to fetch categories:', err);
+        setCategories([
+          { id: 1, name: 'Backend Development' },
+          { id: 2, name: 'Advanced Backend' },
+          { id: 3, name: 'TypeScript Basics' }
+        ]);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     fetchQuizzesData();
     fetchStatsData();
   }, [search, category, currentUser]);
@@ -104,7 +127,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
         <p style={styles.heroSub}>Test your backend engineering skills, check scoring metrics, and code live lobbies.</p>
       </div>
 
-      <div style={styles.layoutGrid}>
+      <div className="grid-layout-2-1">
         {/* Left Side: Quiz List Explorer */}
         <div style={styles.mainContent}>
           <div style={styles.filterBar}>
@@ -126,9 +149,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
                 style={styles.selectInput}
               >
                 <option value="">All Categories</option>
-                <option value="Backend Development">Backend Development</option>
-                <option value="Advanced Backend">Advanced Backend</option>
-                <option value="TypeScript Basics">TypeScript Basics</option>
+                {Array.isArray(categories) && categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
             </div>
             <button className="btn btn-secondary" onClick={fetchQuizzesData} style={styles.refreshBtn}>
@@ -145,7 +170,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
           {loadingQuizzes ? (
             <div style={styles.loader}>Loading quizzes...</div>
           ) : (
-            <div style={styles.quizGrid}>
+            <div className="grid-2-col">
               {quizzes.map((quiz) => (
                 <div
                   key={quiz.id}
@@ -154,7 +179,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
                   onClick={() => navigate(`/quizzes/${quiz.id}`)}
                 >
                   <div style={styles.quizHeader}>
-                    <span style={styles.quizCategory}>{quiz.category}</span>
+                    <span style={styles.quizCategory}>
+                      {typeof quiz.category === 'object' && quiz.category ? quiz.category.name : quiz.category}
+                    </span>
                     <span style={{
                       ...styles.difficultyBadge,
                       backgroundColor: quiz.difficulty === 'Easy' ? 'rgba(16, 185, 129, 0.15)' : quiz.difficulty === 'Medium' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)',
@@ -299,15 +326,6 @@ const styles = {
     maxWidth: '600px',
     margin: '0 auto',
   },
-  layoutGrid: {
-    display: 'grid',
-    gridTemplateColumns: '2fr 1fr',
-    gap: '2rem',
-    alignItems: 'start',
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: '1fr',
-    },
-  },
   mainContent: {
     display: 'flex',
     flexDirection: 'column' as const,
@@ -363,14 +381,6 @@ const styles = {
     padding: '3rem',
     textAlign: 'center' as const,
     color: '#9ca3af',
-  },
-  quizGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '1.5rem',
-    '@media (max-width: 600px)': {
-      gridTemplateColumns: '1fr',
-    },
   },
   quizCard: {
     display: 'flex',

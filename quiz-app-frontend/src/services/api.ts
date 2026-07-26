@@ -127,6 +127,127 @@ export async function getUserStats() {
 }
 
 // ============================================================================
+// 1.5. CATEGORIES
+// ============================================================================
+
+export interface CategoryDto {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+/**
+ * FETCH REQUEST: Fetch All Categories
+ * METHOD: GET
+ * ENDPOINT: quiz/categories
+ * CONTENT-TYPE: application/json
+ * 
+ * SUBMIT_BODY: None
+ */
+export async function getCategories(): Promise<CategoryDto[]> {
+  const response = await fetch(`${API_BASE_URL}/quiz/categories`, {
+    method: 'GET',
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch categories');
+  }
+
+  return response.json();
+}
+
+export interface CreateCategoryDto {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateCategoryDto {
+  name?: string;
+  description?: string;
+}
+
+/**
+ * FETCH REQUEST: Create Category
+ * METHOD: POST
+ * ENDPOINT: quiz/categories
+ * CONTENT-TYPE: application/json
+ * REQUIRES AUTH: Yes (Bearer token, role: Admin or Teacher)
+ * 
+ * SUBMIT_BODY:
+ * {
+ *   "name": "Backend Development",
+ *   "description": "Quizzes about server-side engineering"
+ * }
+ */
+export async function createCategory(data: CreateCategoryDto): Promise<CategoryDto> {
+  const response = await fetch(`${API_BASE_URL}/quiz/categories`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to create category');
+  }
+
+  return response.json();
+}
+
+/**
+ * FETCH REQUEST: Update Category
+ * METHOD: PATCH
+ * ENDPOINT: quiz/categories/:id
+ * CONTENT-TYPE: application/json
+ * REQUIRES AUTH: Yes (Bearer token, role: Admin or Teacher)
+ * 
+ * SUBMIT_BODY:
+ * {
+ *   "name": "Updated Category Name",
+ *   "description": "Updated description"
+ * }
+ */
+export async function updateCategory(id: number | string, data: UpdateCategoryDto): Promise<CategoryDto> {
+  const response = await fetch(`${API_BASE_URL}/quiz/categories/${id}`, {
+    method: 'PATCH',
+    headers: getHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to update category');
+  }
+
+  return response.json();
+}
+
+/**
+ * FETCH REQUEST: Delete Category
+ * METHOD: DELETE
+ * ENDPOINT: quiz/categories/:id
+ * CONTENT-TYPE: application/json
+ * REQUIRES AUTH: Yes (Bearer token, role: Admin or Teacher)
+ * 
+ * SUBMIT_BODY: None
+ */
+export async function deleteCategory(id: number | string): Promise<{ success: boolean }> {
+  const response = await fetch(`${API_BASE_URL}/quiz/categories/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to delete category');
+  }
+
+  return response.json();
+}
+
+
+// ============================================================================
 // 2. QUIZ CRUD
 // ============================================================================
 
@@ -139,7 +260,7 @@ export interface QuizQuestionDto {
 export interface CreateQuizDto {
   title: string;
   description: string;
-  category: string;
+  category: number | string; // Category ID
   difficulty: 'Easy' | 'Medium' | 'Hard';
   timeLimit: number; // in minutes
   questions: QuizQuestionDto[];
@@ -156,7 +277,7 @@ export interface CreateQuizDto {
  * {
  *   "title": "React Hooks Trivia",
  *   "description": "Show off your hooks knowledge!",
- *   "category": "Web Development",
+ *   "category": 1, // Category ID (number)
  *   "difficulty": "Medium",
  *   "timeLimit": 10,
  *   "questions": [
