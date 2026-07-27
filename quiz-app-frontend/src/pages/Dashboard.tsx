@@ -205,7 +205,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
                     </div>
                     <div style={styles.infoItem}>
                       <BookOpen size={16} />
-                      <span>{quiz.questionCount || quiz.questions?.length || 0} questions</span>
+                      <span>{quiz.numberOfQuestions || 0} questions</span>
                     </div>
                   </div>
 
