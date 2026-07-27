@@ -48,6 +48,7 @@ model Quiz {
   id                String     @id @default(cuid())
   title             String
   description       String
+  authorName        String     @default("Anonymous")
   difficulty        Difficulty
   timeLimit         Int
   numberOfQuestions Int

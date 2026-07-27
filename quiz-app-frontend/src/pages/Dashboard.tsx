@@ -210,7 +210,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
                   </div>
 
                   <div style={styles.quizFooter}>
-                    <span style={styles.creatorName}>By {quiz.creator?.username || 'System'}</span>
+                    <span style={styles.creatorName}>By {quiz?.authorName}</span>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       {currentUser && (currentUser.role === 'admin' || currentUser.username === quiz.creator?.username) && (
                         <button

@@ -11,6 +11,10 @@ export class QuizDto {
 
     @IsString()
     @IsOptional()
+    authorName?: string
+
+    @IsString()
+    @IsOptional()
     category?: string
 
     @IsString()

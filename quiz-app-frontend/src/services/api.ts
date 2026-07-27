@@ -234,6 +234,7 @@ export interface QuizQuestionDto {
 export interface CreateQuizDto {
   title: string;
   description: string;
+  authorName?: string;
   categoryId?: number | string; // Category ID
   difficulty: 'Easy' | 'Medium' | 'Hard' | 'EASY' | 'MEDIUM' | 'HARD';
   timeLimit: number; // in minutes

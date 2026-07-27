@@ -120,9 +120,20 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
        *   ]
        * }
        */
+      let authorName = 'Anonymous';
+      try {
+        const storedUser = localStorage.getItem('quiz_user');
+        if (storedUser) {
+          authorName = JSON.parse(storedUser).username || 'Anonymous';
+        }
+      } catch (e) {
+        console.error('Failed to parse quiz_user from localStorage', e);
+      }
+
       await createQuiz({
         title,
         description,
+        authorName,
         categoryId: category,
         difficulty: difficulty.toUpperCase() as any,
         timeLimit: Number(timeLimit),
