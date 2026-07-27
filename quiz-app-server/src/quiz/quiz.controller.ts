@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body } from '@nestjs/common';
 import { CategoryDto } from './dto/category-dto/category-dto';
 import { QuizService } from './quiz.service';
+import { QuizDto } from './dto/quiz-dto/quiz-dto';
 
 @Controller('quiz')
 export class QuizController {
@@ -17,8 +18,8 @@ export class QuizController {
     }
 
     @Post('/create')
-    createQuiz() {
-        return { message: 'Create quiz endpoint' };
+    createQuiz(@Body() quizDto: QuizDto) {
+        return this.quizService.createQuiz(quizDto);
     }
 
     @Patch('/update/:id')

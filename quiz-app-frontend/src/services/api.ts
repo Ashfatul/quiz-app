@@ -28,6 +28,16 @@ const getHeaders = (isMultipart = false) => {
   return headers;
 };
 
+// Helper to parse responses and unwrap .data property if wrapped by a NestJS interceptor
+const handleResponse = async (response: Response, defaultErrorMessage = 'Request failed') => {
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || defaultErrorMessage);
+  }
+  const json = await response.json();
+  return json && json.data !== undefined ? json.data : json;
+};
+
 // ============================================================================
 // 1. AUTHENTICATION & PROFILE
 // ============================================================================
@@ -62,12 +72,7 @@ export async function registerUser(data: RegisterDto) {
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Registration failed');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Registration failed');
 }
 
 
@@ -95,12 +100,7 @@ export async function loginUser(data: LoginDto) {
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Login failed');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Login failed');
 }
 
 
@@ -119,11 +119,7 @@ export async function getUserStats() {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch user statistics');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to fetch user statistics');
 }
 
 // ============================================================================
@@ -150,11 +146,7 @@ export async function getCategories(): Promise<CategoryDto[]> {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch categories');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to fetch categories');
 }
 
 export interface CreateCategoryDto {
@@ -187,12 +179,7 @@ export async function createCategory(data: CreateCategoryDto): Promise<CategoryD
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to create category');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to create category');
 }
 
 /**
@@ -215,12 +202,7 @@ export async function updateCategory(id: number | string, data: UpdateCategoryDt
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to update category');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to update category');
 }
 
 /**
@@ -238,12 +220,7 @@ export async function deleteCategory(id: number | string): Promise<{ success: bo
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to delete category');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to delete category');
 }
 
 
@@ -297,12 +274,7 @@ export async function createQuiz(data: CreateQuizDto) {
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to create quiz');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to create quiz');
 }
 
 
@@ -321,12 +293,7 @@ export async function deleteQuiz(id: number | string) {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to delete quiz');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to delete quiz');
 }
 
 
@@ -350,11 +317,7 @@ export async function getQuizzes(search?: string, category?: string) {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch quizzes');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to fetch quizzes');
 }
 
 
@@ -373,11 +336,7 @@ export async function getQuizDetails(id: number | string) {
     headers: getHeaders(),
   });
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch quiz details');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to fetch quiz details');
 }
 
 // ============================================================================
@@ -413,12 +372,7 @@ export async function submitQuizAttempt(quizId: number | string, data: QuizAttem
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to submit quiz attempt');
-  }
-
-  return response.json();
+  return handleResponse(response, 'Failed to submit quiz attempt');
 }
 
 // ============================================================================

@@ -29,7 +29,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
        * RESPONSE: Array of Quiz entities
        */
       const data = await getQuizzes(search, category);
-      setQuizzes(data);
+      if (Array.isArray(data)) {
+        setQuizzes(data);
+      } else {
+        throw new Error('Quizzes data is not an array');
+      }
     } catch (err: any) {
       setErrorQuizzes('Could not load quizzes. Ensure backend server is running.');
       // Mock data for display when server is offline
@@ -171,7 +175,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
             <div style={styles.loader}>Loading quizzes...</div>
           ) : (
             <div className="grid-2-col">
-              {quizzes.map((quiz) => (
+              {Array.isArray(quizzes) && quizzes.map((quiz) => (
                 <div
                   key={quiz.id}
                   className="glass-panel"
