@@ -96,7 +96,7 @@ export const PlayQuiz: React.FC<PlayQuizProps> = ({ quizId, navigate }) => {
     try {
       // Map answers to the schema expected by the API
       const formattedAnswers = quiz.questions.map((q: any) => ({
-        questionId: Number(q.id),
+        questionId: q.id,
         selectedOptionIndex: answers[q.id] !== undefined ? answers[q.id] : -1,
       }));
 

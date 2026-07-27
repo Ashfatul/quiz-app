@@ -19,11 +19,10 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
-        if (Array.isArray(data.data)) {
-          setCategories(data.data);
-
+        if (Array.isArray(data)) {
+          setCategories(data);
           
-          if (data.data.length > 0) {
+          if (data.length > 0) {
             setCategory(String(data[0].id));
           }
         } else {
@@ -125,7 +124,6 @@ export const CreateQuiz: React.FC<CreateQuizProps> = ({ navigate }) => {
         title,
         description,
         categoryId: category,
-        category: category,
         difficulty: difficulty.toUpperCase() as any,
         timeLimit: Number(timeLimit),
         questions

@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString, IsEnum, IsInt } from "class-validator"
+import { IsArray, IsNotEmpty, IsString, IsEnum, IsInt, IsOptional } from "class-validator"
 import { Difficulty } from '../../../../generated/prisma/enums';
 
 export class QuizDto {
@@ -9,8 +9,13 @@ export class QuizDto {
     @IsString()
     description!: string
 
-    @IsInt()
-    category!: number
+    @IsString()
+    @IsOptional()
+    category?: string
+
+    @IsString()
+    @IsOptional()
+    categoryId?: string
 
     @IsEnum(Difficulty)
     difficulty!: Difficulty
@@ -25,3 +30,4 @@ export class QuizDto {
         correctOptionIndex: number
     }[]
 }
+

@@ -6,7 +6,6 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { CreateQuiz } from './pages/CreateQuiz';
 import { PlayQuiz } from './pages/PlayQuiz';
-import { LiveLobby } from './pages/LiveLobby';
 import { ManageCategories } from './pages/ManageCategories';
 
 function App() {
@@ -54,9 +53,6 @@ function App() {
     }
     if (currentPath === '/categories') {
       return <ManageCategories navigate={navigate} currentUser={currentUser} />;
-    }
-    if (currentPath === '/lobby') {
-      return <LiveLobby currentUser={currentUser} navigate={navigate} />;
     }
     
     // Play Quiz matching (/quizzes/:id)

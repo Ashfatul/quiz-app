@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, LogIn, LogOut, PlusCircle, Trophy, UserPlus, Zap, Settings } from 'lucide-react';
+import { BookOpen, LogIn, LogOut, PlusCircle, Trophy, UserPlus, Settings } from 'lucide-react';
 import { clearAuth } from '../services/api';
 
 interface NavbarProps {
@@ -62,14 +62,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </>
             )}
-            <button
-              className="btn"
-              style={isActive('/lobby') ? styles.activeLink : styles.link}
-              onClick={() => navigate('/lobby')}
-            >
-              <Zap size={18} />
-              Live Multiplayer
-            </button>
           </>
         )}
       </div>

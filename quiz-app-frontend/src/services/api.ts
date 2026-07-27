@@ -1,7 +1,4 @@
-import { io, Socket } from 'socket.io-client';
-
 export const API_BASE_URL = 'http://localhost:3000';
-export const WS_BASE_URL = 'http://localhost:3000';
 
 // Helper to get JWT token from localStorage
 export const getAuthToken = () => localStorage.getItem('quiz_token');
@@ -238,7 +235,6 @@ export interface CreateQuizDto {
   title: string;
   description: string;
   categoryId?: number | string; // Category ID
-  category?: number | string;   // Category ID fallback
   difficulty: 'Easy' | 'Medium' | 'Hard' | 'EASY' | 'MEDIUM' | 'HARD';
   timeLimit: number; // in minutes
   questions: QuizQuestionDto[];
@@ -345,7 +341,7 @@ export async function getQuizDetails(id: number | string) {
 
 export interface QuizAttemptSubmissionDto {
   answers: {
-    questionId: number;
+    questionId: string | number;
     selectedOptionIndex: number;
   }[];
 }
@@ -373,46 +369,4 @@ export async function submitQuizAttempt(quizId: number | string, data: QuizAttem
   });
 
   return handleResponse(response, 'Failed to submit quiz attempt');
-}
-
-// ============================================================================
-// 4. REAL-TIME MULTIPLAYER (WEBSOCKETS)
-// ============================================================================
-
-/**
- * WEBSOCKET CONNECTION AND EVENTS
- * PORT/GATEWAY: WS_BASE_URL (http://localhost:3000)
- * 
- * GATEWAY EVENTS:
- * 1. emit('joinRoom', { code: '1234', username: 'johndoe' })
- *    - To join an active live classroom lobby
- * 
- * 2. on('roomUpdated', (data: { roomCode: string, players: Array<{id: string, username: string}> }))
- *    - Fired by server to sync player lists in the lobby
- * 
- * 3. emit('startQuiz', { code: '1234' })
- *    - Only Host can emit to start the test
- * 
- * 4. on('quizStarted', (data: { questionsCount: number }))
- *    - Multi-broadcasted signal to redirect all players to take test
- * 
- * 5. emit('submitAnswer', { code: '1234', questionId: number, selectedOptionIndex: number })
- *    - Sent during multiplayer quiz to tally current leaderboard rankings
- * 
- * 6. on('scoreboardUpdate', (data: { players: Array<{username: string, score: number}> }))
- *    - Sent to all clients to update the active leaderboard panel
- */
-export function getWebSocketClient(roomCode: string, username: string): Socket {
-  const socket = io(WS_BASE_URL, {
-    auth: {
-      token: getAuthToken(),
-    },
-    query: {
-      roomCode,
-      username,
-    },
-    transports: ['websocket'],
-  });
-
-  return socket;
 }

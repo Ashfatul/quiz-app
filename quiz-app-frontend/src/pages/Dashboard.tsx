@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Filter, BookOpen, Clock, Award, Star, RefreshCw, BarChart2, Zap, Trash2 } from 'lucide-react';
+import { Search, Filter, BookOpen, Clock, Award, Star, RefreshCw, BarChart2, Trash2 } from 'lucide-react';
 import { getQuizzes, getUserStats, deleteQuiz, getCategories } from '../services/api';
 import type { CategoryDto } from '../services/api';
 
@@ -281,20 +281,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentUser, navigate }) =
               </button>
             </div>
           )}
-
-          {/* Multiplayer Quick card */}
-          <div className="glass-panel" style={styles.multiplayerCard}>
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem' }}>
-              <Zap size={24} color="#f59e0b" />
-              <h3>Multiplayer Rooms</h3>
-            </div>
-            <p style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-              Take interactive competitive quizzes with friends using real-time WebSockets gateways.
-            </p>
-            <button className="btn btn-secondary" onClick={() => navigate('/lobby')} style={{ width: '100%' }}>
-              Lobby Gateways
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -552,8 +538,5 @@ const styles = {
     alignItems: 'center',
     textAlign: 'center' as const,
     padding: '2rem 1.5rem',
-  },
-  multiplayerCard: {
-    textAlign: 'left' as const,
   },
 };
